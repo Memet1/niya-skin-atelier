@@ -12,7 +12,7 @@ export function frameHeroCamera(camera, width, height, art) {
 export function initSculpture(canvas, reducedMotion) {
   let renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' }); }
-  catch { return; }
+  catch (error) { console.warn('Hero 3D unavailable; showing CSS fallback.', error); return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -88,7 +88,7 @@ export function frameRitualCamera(camera, width, height) {
 
 export function initRitualScene(canvas, reducedMotion, getProgress) {
   let renderer;
-  try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' }); } catch { return; }
+  try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' }); } catch (error) { console.warn('Ritual 3D unavailable; showing CSS fallback.', error); return; }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(48, 1, .1, 60);
