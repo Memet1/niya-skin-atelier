@@ -6,6 +6,11 @@ import { initSculpture, initRitualScene } from './sculpture.js';
 
 const $ = (selector) => document.querySelector(selector);
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const careFilm = $('#care-film');
+function syncCareFilm() {
+  if (reducedMotion.matches) careFilm.pause();
+  else careFilm.play().catch(() => {});
+}
 let language = 'ru';
 try { language = localStorage.getItem('niya-language') === 'tr' ? 'tr' : 'ru'; } catch {}
 const t = (key) => translate(language, key);
@@ -112,19 +117,6 @@ if (studio.reviews.length) {
   });
 }
 
-const film = $('#care-film');
-const filmButton = $('#film-toggle');
-function updateFilmButton() {
-  filmButton.innerHTML = `${t(film.paused ? 'filmPlay' : 'filmPause')} <span>${film.paused ? '▷' : 'Ⅱ'}</span>`;
-  filmButton.setAttribute('aria-label', t(film.paused ? 'filmPlayLabel' : 'filmPauseLabel'));
-}
-filmButton.addEventListener('click', async () => {
-  if (!film.paused) film.pause();
-  else try { film.preload = 'auto'; await film.play(); showStatus($('#film-status'), ''); } catch { showStatus($('#film-status'), 'filmUnavailable'); }
-  updateFilmButton();
-});
-const filmObserver = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) { film.pause(); updateFilmButton(); } }, { threshold: .05 });
-filmObserver.observe(film);
 $('#portrait-image').addEventListener('error', (event) => { event.target.src = '/assets/niya-portrait.jpg'; event.target.classList.add('portrait-original'); }, { once: true });
 
 if (!reducedMotion.matches) document.body.classList.add('motion-enabled');
@@ -139,7 +131,7 @@ portraitScene.addEventListener('pointermove', (event) => {
 });
 portraitScene.addEventListener('pointerleave', () => { portraitScene.style.setProperty('--portrait-x', '0'); portraitScene.style.setProperty('--portrait-y', '0'); });
 const ritual = $('#ritual');
-const motionAnchors = document.querySelectorAll('.services-intro, .film-wrap, .reviews-heading, .review-grid, .contact-layout, .last-note');
+const motionAnchors = document.querySelectorAll('.services-intro, .reviews-heading, .review-grid, .contact-layout, .last-note');
 let currentStep = -1;
 let ritualProgress = 0;
 let scheduled = false;
@@ -174,11 +166,13 @@ function updateScroll() {
 }
 addEventListener('scroll', () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateScroll); } }, { passive: true });
 addEventListener('resize', updateScroll);
-reducedMotion.addEventListener('change', () => { document.body.classList.toggle('motion-enabled', !reducedMotion.matches); updateScroll(); });
+reducedMotion.addEventListener('change', () => { document.body.classList.toggle('motion-enabled', !reducedMotion.matches); syncCareFilm(); updateScroll(); });
 applyLanguage(language);
 initSculpture($('#skin-canvas'), reducedMotion);
 
 initRitualScene($('#ritual-canvas'), reducedMotion, () => ritualProgress);
+syncCareFilm();
+updateScroll();
 
 function applyLanguage(nextLanguage) {
   language = nextLanguage === 'tr' ? 'tr' : 'ru';
@@ -202,7 +196,6 @@ function applyLanguage(nextLanguage) {
   $('.menu-toggle').setAttribute('aria-label', t($('.header nav').classList.contains('open') ? 'menuClose' : 'menuOpen'));
   currentStep = -1;
   updateScroll();
-  updateFilmButton();
   try { localStorage.setItem('niya-language', language); } catch {}
 }
 document.querySelectorAll('[data-language]').forEach((button) => button.addEventListener('click', () => applyLanguage(button.dataset.language)));
