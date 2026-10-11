@@ -20,6 +20,12 @@ export function validateBooking(data, allowedServices) {
   if (!data.consent) return 'invalidConsent';
   return '';
 }
+export function matchesService(service, query, language = 'ru') {
+  const needle = query.trim().toLocaleLowerCase();
+  if (!needle) return true;
+  const haystack = [service.name?.[language], service.description?.[language], service.category, ...(service.keywords || [])].filter(Boolean).join(' ').toLocaleLowerCase();
+  return haystack.includes(needle);
+}
 // Deterministic positions make the sculpture retrace the same path when scrolling back.
 export function particlePosition(index, count, progress) {
   const p = clamp(progress), t = index / count;

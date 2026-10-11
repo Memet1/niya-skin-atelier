@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ritualState, sectionMotion, validateBooking } from '../src/logic.js';
+import { matchesService, ritualState, sectionMotion, validateBooking } from '../src/logic.js';
 import { services } from '../src/config.js';
 test('lower sections retrace scroll motion with bounded values on any viewport', () => {
   for (const viewport of [390, 844, 900]) {
@@ -28,6 +28,13 @@ test('booking validates contact, service and consent', () => {
   const valid = { name: 'Олена', phone: '+380 (67) 123-45-67', service: ids[0], message: '', consent: 'on' };
   assert.equal(validateBooking(valid, ids), '');
   for (const patch of [{ name: ' ' }, { phone: 'abcdef123456789' }, { phone: '123' }, { service: 'unknown' }, { consent: '' }, { message: 'x'.repeat(501) }]) assert.notEqual(validateBooking({ ...valid, ...patch }, ids), '');
+});
+test('service search matches localized names and intent keywords', () => {
+  const hydration = services.find((service) => service.id === 'hydrate');
+  assert.equal(matchesService(hydration, 'увлажнение', 'ru'), true);
+  assert.equal(matchesService(hydration, 'nem', 'tr'), true);
+  assert.equal(matchesService(hydration, 'пилинг', 'ru'), false);
+  assert.equal(matchesService(hydration, '', 'ru'), true);
 });
 import { particlePosition } from '../src/logic.js';
 test('particle morph is finite and deterministic at both scroll directions', () => {

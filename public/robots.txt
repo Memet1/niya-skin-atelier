@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# AI search crawlers may discover the public service information.
+Sitemap: https://niya-skin-atelier.vercel.app/sitemap.xml

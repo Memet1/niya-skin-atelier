@@ -1,0 +1,20 @@
+# Niya Skin Atelier
+
+Niya is a private cosmetologist offering gentle, personalized facial care.
+The site is available in Russian and Turkish.
+
+## Services
+
+- Skin consultation and personalized care plan: 600 TRY, 45 minutes.
+- Delicate cleansing: 1400 TRY, 75 minutes.
+- Hydration ritual: 1600 TRY, 60 minutes.
+- Gentle renewal / superficial peel: 1200 TRY, 45 minutes.
+- Sculpting facial massage: 1300 TRY, 60 minutes.
+- Full pause ritual with massage and mask: 2100 TRY, 90 minutes.
+
+## Contact
+
+- Instagram: https://www.instagram.com/niya_cosmetolog/
+- Booking: use the booking form on the website or Instagram.
+
+Prices are demonstration values until the cosmetologist confirms the final menu.

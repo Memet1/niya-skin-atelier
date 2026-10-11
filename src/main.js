@@ -1,7 +1,7 @@
 import './style.css';
 import { translate, formatPrice } from './i18n.js';
 import { studio, services } from './config.js';
-import { clamp, ritualState, sectionMotion, validateBooking } from './logic.js';
+import { clamp, matchesService, ritualState, sectionMotion, validateBooking } from './logic.js';
 import { initSculpture, initRitualScene } from './sculpture.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -10,6 +10,7 @@ let language = 'ru';
 try { language = localStorage.getItem('niya-language') === 'tr' ? 'tr' : 'ru'; } catch {}
 const t = (key) => translate(language, key);
 let currentFilter = 'all';
+let serviceQuery = '';
 function showStatus(element, key) { element.dataset.statusKey = key; element.textContent = key ? t(key) : ''; }
 const dialog = $('#booking-dialog');
 const privacy = $('#privacy-dialog');
@@ -27,6 +28,7 @@ function renderServices(filter = 'all') {
   list.replaceChildren();
   services.forEach((service, index) => {
     if (filter !== 'all' && service.category !== filter) return;
+    if (!matchesService(service, serviceQuery, language)) return;
     const row = document.createElement('article');
     row.className = 'service-row';
     // Content comes from the local, developer-controlled price list.
@@ -41,6 +43,7 @@ document.querySelectorAll('[data-filter]').forEach((button) => button.addEventLi
   renderServices(currentFilter);
   updateScroll();
 }));
+$('#service-search').addEventListener('input', (event) => { serviceQuery = event.target.value; renderServices(currentFilter); updateScroll(); });
 document.addEventListener('click', (event) => {
   const book = event.target.closest('[data-book]');
   if (book) {
